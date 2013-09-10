@@ -21,7 +21,7 @@ setup(
     author_email = "yuta@hayashibe.jp",
     description = "Stanford Parser buindings for Python.",
     license = "GNU GENERAL PUBLIC LICENSE Version 3",
-    url = "https://github.com/shirayu/slex-python",
+    url = "https://github.com/shirayu/slex",
 #    package_dir={},
     package_data = {"slex" : ["tool/ClassPathModifier.*"]},
     scripts = ["slex/scripts/slex"],
