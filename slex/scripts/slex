@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+"""
+
+__author__ = 'Yuta Hayashibe' 
+__version__ = ""
+__copyright__ = ""
+__license__ = "GPL v3"
+
+import slex
+import sys
+
+if __name__=='__main__':
+    if len(sys.argv) <= 2:
+        sys.stderr.write("[Usage] slex jar-file-path model-file-path [options]\n")
+        quit()
+
+
+    options = sys.argv[:]
+    options.pop(0) #remove this filename
+
+    jar_path = unicode(options.pop(0))
+    model_fname = unicode(options.pop(0))
+
+    options = tuple(options)
+
+    parser = slex.StanfordParser(jar_path, model_fname, options)
+
+
+    import sys
+    enc = sys.stdin.encoding
+    if enc is None:
+        enc = sys.getfilesystemencoding()
+
+    for line in iter(sys.stdin.readline, ""):
+        try:
+            parsd_sentence = parser.parse(unicode(line.strip(), enc))
+            print unicode(parsd_sentence)
+        except:
+            raise
+            sys.stderr.write("[*] Parsing Error!!\n")
+
+
