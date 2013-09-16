@@ -12,17 +12,68 @@ __license__ = "GPL v3"
 import slex
 import sys
 
+import json
+import codecs
+sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
+
+def output(parsd_sentence):
+    outdic = {}
+    outdic[u"surface"] = parsd_sentence.getSurface()
+    outdic[u"tokenized"] = u" ".join([t.getSurface() for t in parsd_sentence.getTokens()])
+
+    mytokens = []
+    for token in parsd_sentence.getTokens():
+        mytoken = {}
+        mytoken[u"surface"] = token.getSurface()
+        mytoken[u"nodeid"] = token.getNodeid()
+        mytoken[u"position"] = token.getPosition()
+        mytoken[u"relations"] = token.getRelations()
+        mytoken[u"dependency"] = token.getDependency()
+        mytoken[u"dependedTokenIds"] = token.getDependedTokenIds()
+        mytoken[u"typedDependedTokenIds"] = token.getTypedDependedTokenIds()
+        mytokens.append(mytoken)
+    outdic[u"tokens"] = mytokens
+
+    outdic[u"nodes"] = []
+    for (id, node) in parsd_sentence.getNodes().items():
+        mynode = {}
+        mynode[u"tag"] = node.getTag()
+        mynode[u"parent"] = node.getParentNodeid()
+        mynode[u"id"] = node.getNodeid()
+        outdic[u"nodes"].append(mynode)
+
+    json.dump(outdic, sys.stdout, ensure_ascii=False)
+    sys.stdout.write(u"\n")
+
+
+
+import cPickle as pickle
 if __name__=='__main__':
     if len(sys.argv) <= 2:
         sys.stderr.write("[Usage] slex jar-file-path model-file-path [options]\n")
         quit()
 
+    output_style = u"json"
 
     options = sys.argv[:]
     options.pop(0) #remove this filename
 
     jar_path = unicode(options.pop(0))
     model_fname = unicode(options.pop(0))
+
+    if len(options)>0:
+        if options[0] == u"--normal":
+            output_style = u"normal"
+            options.pop(0)
+        elif options[0] == u"--pickle":
+            output_style = u"pickle"
+            options.pop(0)
+        elif options[0] == u"--tpickle":
+            output_style = u"tpickle"
+            options.pop(0)
+        elif options[0] == u"--json":
+            output_style = u"json"
+            options.pop(0)
 
     options = tuple(options)
 
@@ -37,9 +88,15 @@ if __name__=='__main__':
     for line in iter(sys.stdin.readline, ""):
         try:
             parsd_sentence = parser.parse(unicode(line.strip(), enc))
-            print unicode(parsd_sentence)
+            if output_style == u"json":
+                output(parsd_sentence)
+            elif output_style == u"pickle":
+                print pickle.dumps(parsd_sentence, protocol=0)
+            elif output_style == u"tpickle":
+                print pickle.dumps(parsd_sentence, protocol=0).replace(u"\n", u"\t")
+            else:
+                print unicode(parsd_sentence)
         except:
             raise
             sys.stderr.write("[*] Parsing Error!!\n")
-
 
