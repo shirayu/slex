@@ -111,7 +111,7 @@ class StanfordParser(slex.parser.Parser):
         if tree is not None:
             result = self.package.trees.EnglishGrammaticalStructure(tree, self.puncFilter, self.headFinder, True)
             tokenized = []
-            self._parse_tree(tree, parsed_sentence, tokenized, 0, [0])
+            self._parse_tree(tree, parsed_sentence, tokenized, -1, [-1])
             #           #set offset
             for i, t in enumerate(tokenized):
                 position = tokens[i].beginPosition()

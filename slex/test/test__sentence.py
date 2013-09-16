@@ -36,10 +36,10 @@ class Test(unittest.TestCase):
         self.assertEqual( [token for token in self.sen], [] )
 
         self.tokens = []
-        self.tokens.append( slex.corpus.token.Token(4, u"I", 0) )
-        self.tokens.append( slex.corpus.token.Token(6, u"love", 2) )
-        self.tokens.append( slex.corpus.token.Token(8, u"you", 7) )
-        self.tokens.append( slex.corpus.token.Token(9, u".", 12 ))
+        self.tokens.append( slex.corpus.token.Token(3, u"I", 0) )
+        self.tokens.append( slex.corpus.token.Token(5, u"love", 2) )
+        self.tokens.append( slex.corpus.token.Token(7, u"you", 7) )
+        self.tokens.append( slex.corpus.token.Token(8, u".", 12 ))
         for t in self.tokens:
             self.sen.append(t)
 
@@ -49,17 +49,17 @@ class Test(unittest.TestCase):
 
     def __add_nodes(self):
         self.nodes = [ \
-            slex.corpus.token.Node(1, u"ROOT", 0 ) ,\
-            slex.corpus.token.Node(2, u"S", 1) ,\
-            slex.corpus.token.Node(3, u"NP", 2)    ,\
-            slex.corpus.token.Node(4, u"PRP", 3)   , \
-            slex.corpus.token.Node(5, u"VP", 2)    ,\
-            slex.corpus.token.Node(6, u"VBP", 5)   ,\
-            slex.corpus.token.Node(7, u"NP", 5 )   ,\
-            slex.corpus.token.Node(8, u"PRP", 7)   ,\
-            slex.corpus.token.Node(9, u".", 2 )    ,]
+            slex.corpus.token.Node(0, u"ROOT", -1 ) ,\
+            slex.corpus.token.Node(1, u"S", 0) ,\
+            slex.corpus.token.Node(2, u"NP", 1)    ,\
+            slex.corpus.token.Node(3, u"PRP", 2)   , \
+            slex.corpus.token.Node(4, u"VP", 1)    ,\
+            slex.corpus.token.Node(5, u"VBP", 4)   ,\
+            slex.corpus.token.Node(6, u"NP", 4 )   ,\
+            slex.corpus.token.Node(7, u"PRP", 6)   ,\
+            slex.corpus.token.Node(8, u".", 1 )    ,]
         for i, node in enumerate(self.nodes):
-            self.sen.appendNode(i+1, node)
+            self.sen.appendNode(i, node)
 
     def test_node(self):
         self.__add_nodes()
@@ -73,7 +73,7 @@ class Test(unittest.TestCase):
     def test_getNode(self):
         self.__add_nodes()
         for i in range(0, 4):
-            self.assertEqual( self.sen.getNode(i+1), self.nodes[i] )
+            self.assertEqual( self.sen.getNode(i), self.nodes[i] )
         self.assertEqual( self.sen.getNode(self.tokens[0]), self.nodes[4-1])
         self.assertEqual( self.sen.getNode(self.tokens[1]), self.nodes[6-1])
         self.assertEqual( self.sen.getNode(self.tokens[2]), self.nodes[8-1])
@@ -162,11 +162,11 @@ class Test(unittest.TestCase):
         n0 = self.sen.getNode(self.tokens[0])
         self.assertEqual( self.sen.getChildNodes(n0), [])
         n1 = self.sen.getParentNode(n0, 1)
-        self.assertEqual( self.sen.getChildNodes(n1), [4])
+        self.assertEqual( self.sen.getChildNodes(n1), [3])
         n2 = self.sen.getParentNode(n0, 2)
-        self.assertEqual( self.sen.getChildNodes(n2), [3, 5, 9])
+        self.assertEqual( self.sen.getChildNodes(n2), [2, 4, 8])
         n3 = self.sen.getParentNode(n0, 3)
-        self.assertEqual( self.sen.getChildNodes(n3), [2])
+        self.assertEqual( self.sen.getChildNodes(n3), [1])
 
     def test_getIndex(self):
         self.assertEqual( self.sen.getIndex(self.tokens[0]), 0)
