@@ -59,7 +59,7 @@ class Test(unittest.TestCase):
             slex.corpus.token.Node(7, u"PRP", 6)   ,\
             slex.corpus.token.Node(8, u".", 1 )    ,]
         for i, node in enumerate(self.nodes):
-            self.sen.appendNode(i, node)
+            self.sen.appendNode(node)
 
     def test_node(self):
         self.__add_nodes()
@@ -205,6 +205,17 @@ class Test(unittest.TestCase):
         self.assertEqual( self.sen.getNext(self.tokens[2], 2), None)
         self.assertEqual( self.sen.getNext(self.tokens[3], 2), None)
  
+
+    def test_dictionay(self):
+        outdic = self.sen.asDictionary()
+        testdic = {u'tokenized': u'I love you .',
+                u'tokens': [{u'typedDependedTokenIds': [], u'nodeid': 3, u'relations': {}, u'dependency': -1, u'dependedTokenIds': [], u'surface': u'I', u'position': 0}, {u'typedDependedTokenIds': [], u'nodeid': 5, u'relations': {}, u'dependency': -1, u'dependedTokenIds': [], u'surface': u'love', u'position': 2}, {u'typedDependedTokenIds': [], u'nodeid': 7, u'relations': {}, u'dependency': -1, u'dependedTokenIds': [], u'surface': u'you', u'position': 7}, {u'typedDependedTokenIds': [], u'nodeid': 8, u'relations': {}, u'dependency': -1, u'dependedTokenIds': [], u'surface': u'.', u'position': 12}],
+                u'nodes': [], u'surface': u'I love you.'}
+        self.assertEqual(outdic, testdic)
+
+        sen_test = slex.corpus.sentence.ParsedSentence(outdic)
+        self.assertEqual(unicode(sen_test), unicode(self.sen))
+
 
     def tearDown(self):
 #        print unicode(self.sen)

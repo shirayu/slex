@@ -21,13 +21,17 @@ def mark(raw_sentence, range_):
 
 class ParsedSentence(object):
     def __init__(self, surface):
-        assert isinstance(surface, unicode)
-        self.__surface = surface
         self.__tokens = []
         self.__token_ids = []
         self.__nodes = {}
         self.__child_nodes = {}
         self.__nid2tokenid = {}
+
+        if isinstance(surface, dict):
+            self._readDictionary(surface)
+        else:
+            assert isinstance(surface, unicode)
+            self.__surface = surface
 
     def __iter__(self):
         return iter(self.__tokens)
@@ -48,15 +52,15 @@ class ParsedSentence(object):
         self.__tokens.append( token )
         self.__token_ids.append( token.getPosition()  )
 
-    def appendNode(self, tree_id, node):
-        assert isinstance(tree_id, int)
+    def appendNode(self, node):
         assert isinstance(node, slex.corpus.token.Node)
-        self.__nodes[tree_id] =  node 
+        node_id = node.getNodeid()
+        self.__nodes[node_id] =  node 
         parent_id = node.getParentNodeid()
         if self.__child_nodes.has_key(parent_id):
-            self.__child_nodes[parent_id].append(tree_id)
+            self.__child_nodes[parent_id].append(node_id)
         else:
-            self.__child_nodes[parent_id] = [tree_id]
+            self.__child_nodes[parent_id] = [node_id]
 
     def getNode(self, token):
         if type(token) is int:
@@ -214,6 +218,21 @@ class ParsedSentence(object):
             outdic[u"nodes"].append(mynode)
         return outdic
 
+
+    def _readDictionary(self, indic):
+        assert isinstance(indic, dict)
+
+        self.__surface = indic[u"surface"]
+        for token_dic in indic[u"tokens"]:
+            token = slex.corpus.token.Token(token_dic[u"nodeid"], token_dic[u"surface"], token_dic[u"position"])
+            token.setDependency(token_dic[u"dependency"])
+            token.setRelations( token_dic[u"relations"] )
+            token.setDependedTokenIds(token_dic[u"dependedTokenIds"])
+            token.setTypedDependedTokenIds(token_dic[u"typedDependedTokenIds"])
+            self.append(token)
+        for node_dic in indic[u"nodes"]:
+            node = slex.corpus.token.Node(node_dic[u"id"], node_dic[u"tag"], node_dic[u"parent"])
+            self.appendNode(node)
 
 
 

@@ -91,7 +91,7 @@ class StanfordParser(slex.parser.Parser):
         lastID[0] += 1
         this_tree_id = lastID[0]
         this_node = slex.corpus.token.Node(this_tree_id, tree.label().category(), parentID)
-        parsed_sentence.appendNode(this_tree_id, this_node)
+        parsed_sentence.appendNode(this_node)
         if ( len(kids) == 1 and kids[0].isLeaf()):
             leaf = ( this_tree_id, kids[0].label().word() )
             tokenized.append( leaf );

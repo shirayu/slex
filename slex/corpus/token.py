@@ -54,6 +54,13 @@ class Token(object):
     def getTypedDependedTokenIds(self):
         return self.__typed_depended_rels
 
+    def setDependedTokenIds(self, val):
+        self.__depended_rels = val
+    def setTypedDependedTokenIds(self, val):
+        self.__typed_depended_rels = val
+    def setRelations(self, val):
+        self.__rels = val
+ 
     def getRelations(self):
         return self.__rels
            
