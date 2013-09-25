@@ -16,35 +16,6 @@ import json
 import codecs
 sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
 
-def output(parsd_sentence):
-    outdic = {}
-    outdic[u"surface"] = parsd_sentence.getSurface()
-    outdic[u"tokenized"] = u" ".join([t.getSurface() for t in parsd_sentence.getTokens()])
-
-    mytokens = []
-    for token in parsd_sentence.getTokens():
-        mytoken = {}
-        mytoken[u"surface"] = token.getSurface()
-        mytoken[u"nodeid"] = token.getNodeid()
-        mytoken[u"position"] = token.getPosition()
-        mytoken[u"relations"] = token.getRelations()
-        mytoken[u"dependency"] = token.getDependency()
-        mytoken[u"dependedTokenIds"] = token.getDependedTokenIds()
-        mytoken[u"typedDependedTokenIds"] = token.getTypedDependedTokenIds()
-        mytokens.append(mytoken)
-    outdic[u"tokens"] = mytokens
-
-    outdic[u"nodes"] = []
-    for (id, node) in parsd_sentence.getNodes().items():
-        mynode = {}
-        mynode[u"tag"] = node.getTag()
-        mynode[u"parent"] = node.getParentNodeid()
-        mynode[u"id"] = node.getNodeid()
-        outdic[u"nodes"].append(mynode)
-
-    json.dump(outdic, sys.stdout, ensure_ascii=False)
-    sys.stdout.write(u"\n")
-
 
 
 import cPickle as pickle
@@ -89,7 +60,9 @@ if __name__=='__main__':
         try:
             parsd_sentence = parser.parse(unicode(line.strip(), enc))
             if output_style == u"json":
-                output(parsd_sentence)
+                outdic = parsd_sentence.asDictionary()
+                json.dump(outdic, sys.stdout, ensure_ascii=False)
+                sys.stdout.write(u"\n")
             elif output_style == u"pickle":
                 print pickle.dumps(parsd_sentence, protocol=0)
             elif output_style == u"tpickle":

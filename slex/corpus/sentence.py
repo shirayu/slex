@@ -187,6 +187,35 @@ class ParsedSentence(object):
         dump += u"\n----\n"
         return dump
 
+    def asDictionary(self):
+        outdic = {}
+        outdic[u"surface"] = self.getSurface()
+        outdic[u"tokenized"] = u" ".join([t.getSurface() for t in self.getTokens()])
+
+        mytokens = []
+        for token in self.getTokens():
+            mytoken = {}
+            mytoken[u"surface"] = token.getSurface()
+            mytoken[u"nodeid"] = token.getNodeid()
+            mytoken[u"position"] = token.getPosition()
+            mytoken[u"relations"] = token.getRelations()
+            mytoken[u"dependency"] = token.getDependency()
+            mytoken[u"dependedTokenIds"] = token.getDependedTokenIds()
+            mytoken[u"typedDependedTokenIds"] = token.getTypedDependedTokenIds()
+            mytokens.append(mytoken)
+        outdic[u"tokens"] = mytokens
+
+        outdic[u"nodes"] = []
+        for (id, node) in self.getNodes().items():
+            mynode = {}
+            mynode[u"tag"] = node.getTag()
+            mynode[u"parent"] = node.getParentNodeid()
+            mynode[u"id"] = node.getNodeid()
+            outdic[u"nodes"].append(mynode)
+        return outdic
+
+
+
 
 if __name__=='__main__':
     pass
